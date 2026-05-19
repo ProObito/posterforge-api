@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RequestAccessRouteImport } from './routes/request-access'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as EndpointsRouteImport } from './routes/endpoints'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiV2TemplatesAnimeNumNameRouteImport } from './routes/api/v2/templates/anime.$num.$name'
 
@@ -22,6 +24,16 @@ const RequestAccessRoute = RequestAccessRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EndpointsRoute = EndpointsRouteImport.update({
+  id: '/endpoints',
+  path: '/endpoints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -38,12 +50,16 @@ const ApiV2TemplatesAnimeNumNameRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/endpoints': typeof EndpointsRoute
   '/login': typeof LoginRoute
   '/request-access': typeof RequestAccessRoute
   '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/endpoints': typeof EndpointsRoute
   '/login': typeof LoginRoute
   '/request-access': typeof RequestAccessRoute
   '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
@@ -51,6 +67,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/endpoints': typeof EndpointsRoute
   '/login': typeof LoginRoute
   '/request-access': typeof RequestAccessRoute
   '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
@@ -59,14 +77,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/endpoints'
     | '/login'
     | '/request-access'
     | '/api/v2/templates/anime/$num/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/request-access' | '/api/v2/templates/anime/$num/$name'
+  to:
+    | '/'
+    | '/admin'
+    | '/endpoints'
+    | '/login'
+    | '/request-access'
+    | '/api/v2/templates/anime/$num/$name'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/endpoints'
     | '/login'
     | '/request-access'
     | '/api/v2/templates/anime/$num/$name'
@@ -74,6 +102,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  EndpointsRoute: typeof EndpointsRoute
   LoginRoute: typeof LoginRoute
   RequestAccessRoute: typeof RequestAccessRoute
   ApiV2TemplatesAnimeNumNameRoute: typeof ApiV2TemplatesAnimeNumNameRoute
@@ -95,6 +125,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/endpoints': {
+      id: '/endpoints'
+      path: '/endpoints'
+      fullPath: '/endpoints'
+      preLoaderRoute: typeof EndpointsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -114,6 +158,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  EndpointsRoute: EndpointsRoute,
   LoginRoute: LoginRoute,
   RequestAccessRoute: RequestAccessRoute,
   ApiV2TemplatesAnimeNumNameRoute: ApiV2TemplatesAnimeNumNameRoute,
