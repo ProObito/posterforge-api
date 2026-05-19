@@ -9,38 +9,92 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RequestAccessRouteImport } from './routes/request-access'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiV2TemplatesAnimeNumNameRouteImport } from './routes/api/v2/templates/anime.$num.$name'
 
+const RequestAccessRoute = RequestAccessRouteImport.update({
+  id: '/request-access',
+  path: '/request-access',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV2TemplatesAnimeNumNameRoute =
+  ApiV2TemplatesAnimeNumNameRouteImport.update({
+    id: '/api/v2/templates/anime/$num/$name',
+    path: '/api/v2/templates/anime/$num/$name',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/request-access': typeof RequestAccessRoute
+  '/api/v2/templates/anime/$num/$name': typeof ApiV2TemplatesAnimeNumNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/request-access'
+    | '/api/v2/templates/anime/$num/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/login' | '/request-access' | '/api/v2/templates/anime/$num/$name'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/request-access'
+    | '/api/v2/templates/anime/$num/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LoginRoute: typeof LoginRoute
+  RequestAccessRoute: typeof RequestAccessRoute
+  ApiV2TemplatesAnimeNumNameRoute: typeof ApiV2TemplatesAnimeNumNameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/request-access': {
+      id: '/request-access'
+      path: '/request-access'
+      fullPath: '/request-access'
+      preLoaderRoute: typeof RequestAccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +102,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v2/templates/anime/$num/$name': {
+      id: '/api/v2/templates/anime/$num/$name'
+      path: '/api/v2/templates/anime/$num/$name'
+      fullPath: '/api/v2/templates/anime/$num/$name'
+      preLoaderRoute: typeof ApiV2TemplatesAnimeNumNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LoginRoute: LoginRoute,
+  RequestAccessRoute: RequestAccessRoute,
+  ApiV2TemplatesAnimeNumNameRoute: ApiV2TemplatesAnimeNumNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
